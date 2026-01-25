@@ -30,17 +30,36 @@ export class AppleNotesManager {
    * @param title - The note title
    * @param content - The note content
    * @param tags - Optional array of tags
+   * @param folder - Optional folder name (Apple Notes folders are flat, use exact folder name e.g., "Work")
    * @returns The created note object or null if creation fails
    */
-  createNote(title: string, content: string, tags: string[] = []): Note | null {
+  createNote(title: string, content: string, tags: string[] = [], folder?: string): Note | null {
     const formattedContent = formatContent(content);
-    const script = `
-      tell application "Notes"
-        tell account "${this.ICLOUD_ACCOUNT}"
-          make new note with properties {name:"${title}", body:"${formattedContent}"}
+    const escapedTitle = title.replace(/"/g, '\\"');
+
+    // Build AppleScript with optional folder targeting
+    // Note: Apple Notes folders are flat at the account level in AppleScript
+    let script: string;
+    if (folder) {
+      const escapedFolder = folder.replace(/"/g, '\\"');
+      script = `
+        tell application "Notes"
+          tell account "${this.ICLOUD_ACCOUNT}"
+            tell folder "${escapedFolder}"
+              make new note with properties {name:"${escapedTitle}", body:"${formattedContent}"}
+            end tell
+          end tell
         end tell
-      end tell
-    `;
+      `;
+    } else {
+      script = `
+        tell application "Notes"
+          tell account "${this.ICLOUD_ACCOUNT}"
+            make new note with properties {name:"${escapedTitle}", body:"${formattedContent}"}
+          end tell
+        end tell
+      `;
+    }
 
     const result = runAppleScript(script);
     if (!result.success) {
