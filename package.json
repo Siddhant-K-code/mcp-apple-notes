@@ -7,7 +7,7 @@
     "start": "node --require tsconfig-paths/register build/index.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.4.1",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
