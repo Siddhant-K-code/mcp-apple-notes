@@ -1,3 +1,7 @@
+> [!Caution]
+> Not actively maintained. Use at your own risk!
+
+
 # 📝 Apple Notes MCP Server
 
 **Apple Notes MCP Server** is a Model Context Protocol server that enables seamless interaction with Apple Notes through natural language. Create, search, and retrieve notes effortlessly using Claude or other AI assistants! 🎉
