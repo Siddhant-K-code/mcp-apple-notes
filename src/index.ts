@@ -4,15 +4,38 @@ import { z } from "zod";
 import { AppleNotesManager } from "@/services/appleNotesManager.js";
 import type { CreateNoteParams, SearchParams, GetNoteParams } from "@/types.js";
 
+// Initialize notes manager with error handling
+let notesManager: AppleNotesManager;
+
+try {
+  notesManager = new AppleNotesManager();
+  // Use stderr for logging in MCP context (stdout is reserved for JSON-RPC)
+  if (process.stderr) {
+    process.stderr.write('✅ Apple Notes MCP Server initialized successfully\n');
+    process.stderr.write(`📝 Using account: ${notesManager.getCurrentAccount() || 'default'}\n`);
+  }
+} catch (error) {
+  // Use stderr for error messages in MCP context
+  if (process.stderr) {
+    process.stderr.write(`❌ Failed to initialize Apple Notes: ${error}\n`);
+    process.stderr.write('\n🔧 Troubleshooting:\n');
+    process.stderr.write('1. Ensure Apple Notes app is installed\n');
+    process.stderr.write('2. Configure at least one account in Notes\n');
+    process.stderr.write('3. Grant permission when prompted\n');
+    process.stderr.write('4. Check System Settings > Privacy & Security > Automation\n');
+    process.stderr.write('   - Look for Terminal.app or Claude.app\n');
+    process.stderr.write('   - Enable access to Notes.app\n');
+    process.stderr.write('\n📖 For more help: https://github.com/punkpeye/mcp-apple-notes#troubleshooting\n');
+  }
+  process.exit(1);
+}
+
 // Initialize the MCP server
 const server = new McpServer({
   name: "apple-notes",
-  version: "1.0.0",
+  version: "1.0.1",
   description: "MCP server for interacting with Apple Notes"
 });
-
-// Initialize the notes manager
-const notesManager = new AppleNotesManager();
 
 // Define tool schemas
 const createNoteSchema = {
