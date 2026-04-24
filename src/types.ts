@@ -18,6 +18,7 @@ export interface CreateNoteParams {
   title: string;
   content: string;
   tags?: string[];
+  folder?: string;
 }
 
 export interface SearchParams {
