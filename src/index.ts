@@ -117,5 +117,6 @@ server.tool(
 );
 
 // Start the server
+console.error("Starting Apple Notes MCP server.");
 const transport = new StdioServerTransport();
 await server.connect(transport);
