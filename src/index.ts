@@ -18,7 +18,8 @@ const notesManager = new AppleNotesManager();
 const createNoteSchema = {
   title: z.string().min(1, "Title is required"),
   content: z.string().min(1, "Content is required"),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
+  folder: z.string().optional().describe("Folder name to save the note to (optional)")
 };
 
 const searchSchema = {
@@ -33,9 +34,9 @@ const getNoteSchema = {
 server.tool(
   "create-note",
   createNoteSchema,
-  async ({ title, content, tags = [] }: CreateNoteParams) => {
+  async ({ title, content, tags = [], folder }: CreateNoteParams) => {
     try {
-      const note = notesManager.createNote(title, content, tags);
+      const note = notesManager.createNote(title, content, tags, folder);
       if (!note) {
         return {
           content: [{
