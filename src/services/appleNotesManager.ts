@@ -1,25 +1,23 @@
 import type { Note } from '@/types.js';
 import { runAppleScript } from '@/utils/applescript.js';
+import { markdownToHtml } from '@/utils/markdown.js';
 
 /**
  * Formats note content for AppleScript compatibility
- * @param content - The raw note content
- * @returns Formatted content with proper line breaks
+ * Converts markdown to HTML and escapes quotes for AppleScript
+ * @param content - The raw note content (markdown)
+ * @returns Formatted HTML content safe for AppleScript
  */
 const formatContent = (content: string): string => {
   if (!content) return '';
 
-  // Define replacement patterns for text formatting
-  const replacements: [string, RegExp][] = [
-    ['\n', /\n/g],
-    ['\t', /\t/g],
-    ['"', /"/g], // Escape quotes for AppleScript
-  ];
+  // Convert markdown to HTML first
+  let html = markdownToHtml(content);
 
-  return replacements.reduce(
-    (text, [char, pattern]) => text.replace(pattern, char === '"' ? '\\"' : '<br>'),
-    content
-  );
+  // Escape quotes for AppleScript string embedding
+  html = html.replace(/"/g, '\\"');
+
+  return html;
 };
 
 export class AppleNotesManager {
